@@ -38,4 +38,57 @@ export default class DB {
             return false
         }
     }
+
+    static getTaskByID(id) {
+        let data;
+        if (DB.DBExists()) {
+            data = fs.readFileSync(filename, "utf-8")
+        } else {
+            DB.createDB()
+            return false
+        }
+
+        try {
+            data = JSON.parse(data)
+            const task = data.find(task => task.id === id)
+            return task ? task : false
+        } catch (error) {
+            throw new Error('Syntax error')
+        }
+    }
+
+    static getTaskByTitle(title) {
+        let data;
+        if (DB.DBExists()) {
+            data = fs.readFileSync(filename, "utf-8")
+        } else {
+            DB.createDB()
+            return false
+        }
+
+        try {
+            data = JSON.parse(data)
+            const task = data.find(task => task.title === title)
+            return task ? task : false
+        } catch (error) {
+            throw new Error('Syntax error')
+        }
+    }
+
+    static getAllTasks() {
+        let data;
+        if (DB.DBExists()) {
+            data = fs.readFileSync(filename, "utf-8")
+        } else {
+            DB.createDB()
+            return []
+        }
+
+        try {
+            data = JSON.parse(data)
+            return data
+        } catch (error) {
+            throw new Error('Syntax error')
+        }
+    }
 }
