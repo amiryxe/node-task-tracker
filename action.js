@@ -51,4 +51,31 @@ export default class Action {
             console.log(error(error.message));
         }
     }
+
+    static async delete() {
+        const tasks = Task.getAllTasks(true)
+        const choices = []
+
+        for (const task of tasks) {
+            choices.push(task.title)
+        }
+
+        const answer = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'title',
+                message: 'Select task to delete:',
+                choices
+            }
+        ])
+
+        const task = Task.getTaskByTitle(answer.title)
+
+        try {
+            DB.deleteTask(task.id)
+            console.log(success('Task deleted successfully'))
+        } catch (error) {
+            console.log(error(error.message))
+        }
+    }
 }
