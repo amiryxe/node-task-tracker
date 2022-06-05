@@ -78,4 +78,24 @@ export default class Action {
             console.log(error(error.message))
         }
     }
+
+    static async deleteAll() {
+        const answer = await inquirer.prompt([
+            {
+                type: 'confirm',
+                name: 'result',
+                message: 'Are you sure you want to delete all tasks?',
+            }
+        ])
+
+        if (answer.result) {
+            try {
+                DB.resetDB()
+                console.log(success('All tasks deleted successfully'))
+            }
+            catch (error) {
+                console.log(error(error.message))
+            }
+        }
+    }
 }
