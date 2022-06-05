@@ -21,4 +21,34 @@ export default class Action {
             console.log(warn('No tasks found'));
         }
     }
+
+    static async add() {
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'Enter task Title:',
+                validate: (value) => {
+                    if (value.length < 3) {
+                        return 'Please enter a valid title'
+                    }
+                    return true
+                },
+            },
+            {
+                type: 'confirm',
+                name: 'completed',
+                message: 'Is task completed?',
+                default: false,
+            }
+        ])
+
+        try {
+            const task = new Task(answers.title, answers.completed)
+            task.save()
+            console.log(success('Task added successfully'));
+        } catch (error) {
+            console.log(error(error.message));
+        }
+    }
 }
