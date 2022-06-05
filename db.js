@@ -91,4 +91,78 @@ export default class DB {
             throw new Error('Syntax error')
         }
     }
+
+    static saveTask(title, complete = true, id = 0) {
+        id = Number(id)
+
+        if (id < 0 || id !== parseInt(id)) {
+            throw new Error('ID must be a positive integer')
+        } else if (typeof title !== 'string' || title.length < 3) {
+            throw new Error('Title must be a string with at least 3 characters')
+        }
+
+        const task = DB.getTaskByTitle(title)
+        if (task && task.id != id) {
+            throw new Error('Task already exists')
+        }
+
+        let data;
+        if (DB.DBExists()) {
+            data = fs.readFileSync(filename, "utf-8")
+        } else {
+            try {
+                DB.createDB()
+                data = "[]"
+            } catch (err) {
+                throw new Error(err.message)
+            }
+        }
+
+        try {
+            data = JSON.parse(data)
+        } catch (error) {
+            throw new Error('Syntax error')
+        }
+
+        if (id === 0) {
+            if (data.length === 0) {
+                id = 1
+            } else {
+                id = data[data.length - 1].id + 1
+            }
+
+            data.push({
+                id,
+                title,
+                complete
+            })
+
+            const str = JSON.stringify(data, null, "    ")
+
+            try {
+                fs.writeFileSync(filename, str, "utf-8")
+                return true
+            } catch (err) {
+                throw new Error(err.message)
+            }
+        } else {
+            const task = data.find(task => task.id === id)
+
+            if (task) {
+                task.title = title
+                task.completed = completed
+
+                const str = JSON.stringify(data, null, "    ")
+
+                try {
+                    fs.writeFileSync(filename, str, "utf-8")
+                    return true
+                } catch (error) {
+                    throw new Error(error.message)
+                }
+            }
+
+            throw new Error('Task not found')
+        }
+    }
 }
