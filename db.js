@@ -165,4 +165,60 @@ export default class DB {
             throw new Error('Task not found')
         }
     }
+
+    static insertBulkData(data) {
+        if (typeof data === 'string') {
+            try {
+                data = JSON.parse(data)
+            } catch (error) {
+                throw new Error('Syntax error')
+            }
+        }
+
+        if (data instanceof Array) {
+            try {
+                data = JSON.stringify(data, null, "    ")
+            } catch (error) {
+                throw new Error('invalid data')
+            }
+        }
+
+        try {
+            fs.writeFileSync(filename, data)
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    static deleteTask(id) {
+        id = Number(id)
+
+        if (id > 0 && id === parseInt(id)) {
+            let data
+
+            try {
+                data = fs.readFileSync(filename, "utf-8")
+                data = JSON.parse(data)
+            } catch (error) {
+                throw new Error('cannot read db file')
+            }
+
+            const task = data.find(task => task.id === id)
+
+            if (task) {
+                data.splice(data.indexOf(task), 1)
+                data = JSON.stringify(data, null, "    ")
+
+                try {
+                    fs.writeFileSync(filename, data)
+                    return true
+                } catch (error) {
+                    throw new Error(error.message)
+                }
+            }
+            return false
+        } else {
+            throw new Error('invalid id')
+        }
+    }
 }
