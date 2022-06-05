@@ -92,7 +92,7 @@ export default class DB {
         }
     }
 
-    static saveTask(title, complete = true, id = 0) {
+    static saveTask(title, completed = true, id = 0) {
         id = Number(id)
 
         if (id < 0 || id !== parseInt(id)) {
@@ -134,14 +134,14 @@ export default class DB {
             data.push({
                 id,
                 title,
-                complete
+                completed
             })
 
             const str = JSON.stringify(data, null, "    ")
 
             try {
                 fs.writeFileSync(filename, str, "utf-8")
-                return true
+                return id
             } catch (err) {
                 throw new Error(err.message)
             }
@@ -156,7 +156,7 @@ export default class DB {
 
                 try {
                     fs.writeFileSync(filename, str, "utf-8")
-                    return true
+                    return id
                 } catch (error) {
                     throw new Error(error.message)
                 }

@@ -1,4 +1,9 @@
 import "dotenv/config"
 import DB from './db.js'
 
-DB.deleteTask(2)
+import Task from "./task.js"
+
+
+const t2 = Task.getTaskById(3)
+
+console.log(t2);
