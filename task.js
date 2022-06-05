@@ -59,10 +59,44 @@ export default class Task {
             const task = DB.getTaskByID(id)
             if (task) {
                 const item = new Task(task.title, task.completed)
-                item.#id = id
+                item.#id = task.id
                 return item
             }
             return false
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+    static getTaskByTitle(title) {
+        try {
+            const task = DB.getTaskByTitle(title)
+            if (task) {
+                const item = new Task(task.title, task.completed)
+                item.#id = task.id
+                return item
+            }
+            return false
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+    static getAllTasks(rawObject = false) {
+        try {
+            const tasks = DB.getAllTasks()
+            if (rawObject) {
+                return tasks
+            }
+            const items = []
+
+            for (const task of tasks) {
+                const item = new Task(task.title, task.completed)
+                item.#id = task.id
+                items.push(item)
+            }
+
+            return items
         } catch (error) {
             throw new Error(error)
         }
