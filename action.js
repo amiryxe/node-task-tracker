@@ -237,6 +237,7 @@ export default class Action {
             })
             DB.insertBulkData(data)
             console.log(success('Tasks imported successfully'));
+            console.table(data)
         } catch (err) {
             console.log(error(err.message));
         }
