@@ -47,8 +47,8 @@ export default class Action {
             const task = new Task(answers.title, answers.completed)
             task.save()
             console.log(success('Task added successfully'));
-        } catch (error) {
-            console.log(error(error.message));
+        } catch (err) {
+            console.log(error(err.message));
         }
     }
 
@@ -96,6 +96,54 @@ export default class Action {
             catch (error) {
                 console.log(error(error.message))
             }
+        }
+    }
+
+    static async edit() {
+        const tasks = Task.getAllTasks(true)
+        const choices = []
+
+        for (const task of tasks) {
+            choices.push(task.title)
+        }
+
+        const selectedTask = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'title',
+                message: 'Select task to edit:',
+                choices
+            }
+        ])
+
+        const task = Task.getTaskByTitle(selectedTask.title)
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'Enter task Title:',
+                validate: (value) => {
+                    if (value.length < 3) {
+                        return 'Please enter a valid title'
+                    }
+                    return true
+                },
+                default: task.title,
+            },
+            {
+                type: 'confirm',
+                name: 'completed',
+                message: 'Is task completed?',
+                default: task.completed,
+            }
+        ])
+
+        try {
+            DB.saveTask(answers.title, answers.completed, task.id)
+            console.log(success('Task edited successfully'))
+        } catch (error) {
+            console.log(error(error.message));
         }
     }
 }
