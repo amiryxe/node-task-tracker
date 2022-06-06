@@ -178,4 +178,34 @@ export default class Action {
         }
     }
 
+    static async import() {
+        const answer = await inquirer.prompt({
+            type: 'input',
+            name: 'filename',
+            message: 'Enter filename:',
+        })
+
+        if (fs.existsSync(answer.filename)) {
+            try {
+                const input = fs.readFileSync(answer.filename)
+                const data = parse(input, {
+                    columns: true,
+                    cast: (value, context) => {
+                        if (context.column === 'id') {
+                            return Number(value)
+                        } else if (context.column === 'completed') {
+                            return value.toLowerCase() === 'true' ? true : false
+                        }
+
+                        return value
+                    }
+                })
+                DB.insertBulkData(data)
+                console.log(success('Tasks imported successfully'));
+            } catch (err) {
+
+            }
+
+        }
+    }
 }
