@@ -203,9 +203,42 @@ export default class Action {
                 DB.insertBulkData(data)
                 console.log(success('Tasks imported successfully'));
             } catch (err) {
-
+                console.log(error(err.message));
             }
+        }
+    }
 
+    static async download() {
+        const baseURL = process.env.BASE_URL
+        const answer = await inquirer.prompt({
+            type: 'input',
+            name: 'filename',
+            message: 'Enter filename to download:',
+        })
+
+        const config = {
+            baseURL,
+            url: answer.filename
+        }
+
+        try {
+            const response = await axios(config)
+            const data = parse(response.data, {
+                columns: true,
+                cast: (value, context) => {
+                    if (context.column === 'id') {
+                        return Number(value)
+                    } else if (context.column === 'completed') {
+                        return value.toLowerCase() === 'true' ? true : false
+                    }
+
+                    return value
+                }
+            })
+            DB.insertBulkData(data)
+            console.log(success('Tasks imported successfully'));
+        } catch (err) {
+            console.log(error(err.message));
         }
     }
 }
