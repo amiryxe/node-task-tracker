@@ -146,4 +146,36 @@ export default class Action {
             console.log(error(error.message));
         }
     }
+
+    static async export() {
+        const answer = await inquirer.prompt({
+            type: 'input',
+            name: 'filename',
+            message: 'Enter filename:',
+            validate: (value) => {
+                if (!/^[\w .-]{1,50}$/.test(value)) {
+                    return 'Please enter a valid filename'
+                }
+                return true
+            }
+        })
+
+        const tasks = Task.getAllTasks(true)
+        const output = stringify(tasks, {
+            header: true, // name of columns
+            cast: { // manipulate data before writing to csv
+                boolean: (value, context) => {
+                    return String(value)
+                }
+            }
+        })
+
+        try {
+            fs.writeFileSync(answer.filename, output)
+            console.log(success('Tasks exported successfully'))
+        } catch (err) {
+            console.log(error(err.message));
+        }
+    }
+
 }
