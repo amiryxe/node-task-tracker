@@ -13,6 +13,7 @@ const commands = [
     'export',
     'import',
     'download',
+    'help'
 ]
 
 const error = chalk.redBright.bold
@@ -35,6 +36,19 @@ if (command) {
         Action.import()
     } else if (command === 'download') {
         Action.download()
+    }
+    else if (command === 'help') {
+        console.log(`
+${chalk.bgBlue('You can use this commands:')}
+${warn('  list')}
+${warn('  add')}
+${warn('  delete')}
+${warn('  delete-all')}
+${warn('  edit')}
+${warn('  export')}
+${warn('  import')}
+${warn('  download')}
+        `)
     } else {
         console.log(error('Unknown command: ' + command))
     }
